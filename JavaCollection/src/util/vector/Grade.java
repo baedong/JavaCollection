@@ -14,6 +14,12 @@ public class Grade {
 		this.math=math;
 	}
 
+	public int getTotal(){
+		int total = 0;
+		total = this.kor+this.eng+this.math;
+		return total;
+	}	
+	
 	public int getTotal(int kor,int eng,int math){
 		int total = 0;
 		total = kor+eng+math;

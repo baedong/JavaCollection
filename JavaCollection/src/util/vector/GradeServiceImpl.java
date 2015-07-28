@@ -1,5 +1,7 @@
 package util.vector;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 /*
  * 프로그램을 코딩하다 보면 자료구조를 다루는데 있어서 CRUD 액션의 반복을 경험하게 됩니다
@@ -29,7 +31,7 @@ public class GradeServiceImpl implements GradeService{
 	}
 
 	@Override
-	public String searchGradebyHakbun(String hakbun) { //학번 검색
+	public String searchGradeByHakbun(String hakbun) { //학번 검색
 		String msg = "";
 		Grade grade = null; // 지변으로 인스턴스 선언
 		//List 계열의 클래스 길이는 size() 로 구한다
@@ -49,11 +51,77 @@ public class GradeServiceImpl implements GradeService{
 		}
 		return msg;
 	}
+	
+	@Override
+	public Vector<Grade> searchGradeByName(String name) { //이름 검색
+		Vector<Grade> temp = new Vector<Grade>();
+		Grade grade = null;
+		for (int i = 0; i < vec.size(); i++) {
+			String searchName = vec.elementAt(i).getName();
+			if (name.equalsIgnoreCase(searchName)) { // equalsIgnoreCase (대소문자 구별안함) equals ( 대소문자 구별함)
+				
+				grade = new Grade(vec.elementAt(i).getHakbun(),searchName,
+						vec.elementAt(i).getKor(),
+						vec.elementAt(i).getEng(),
+						vec.elementAt(i).getMath());
+				temp.add(grade);
+			} else {
+				temp.remove(new Grade()); //temp 라는 백터를 완전히 비워서 null 로 리턴
+			}
+		}
+		return temp;
+	}
+	
 
 	@Override
-	public void ascGradeTotal() { //성적 정렬
+	public void descByTotal() { // 성적순 정렬
+		// Java API 중에서 정렬담당 클래스 Comparator
+		// 인터페이스를 구현한 내부(익명) 클래스 (anonymous inner class)
+		Comparator<Grade> desc = new Comparator<Grade>() {
+			
+			@Override
+			public int compare(Grade g1, Grade g2) {
+				/* 삼항연산자
+					if(condition){
+						--> true 면 statement 실행
+					}else{
+						--> false 면 statement 실행
+					}
+					
+					(condition) ? 참 : 거짓 ;
+				
+				int temp = 0;
+				if (g1.getTotal()<g2.getTotal()) {
+					temp = 1 ;
+				} else {
+					if (g1.getTotal()==g2.getTotal()) {
+						temp = 0 ;
+					} else {
+						temp = -1 ;
+					}
+				}return temp;
+				*/
+				return	(g1.getTotal()<g2.getTotal()) ? 1 :
+						(g1.getTotal()==g2.getTotal()) ? 0 : -1 ;
+			}
+		};
+		Collections.sort(vec,desc);		// 정열된값을 돌려주는기능
+		System.out.println(vec.toString());
+	}
 
-		
+	@Override
+	public void ascByName() { // 이름순 정렬
+		Comparator<Grade> asc = new Comparator<Grade>() {
+			
+			@Override
+			public int compare(Grade g1, Grade g2) {
+				//값(value)이 int 타입이 아니고 String 타입의 우선순위 결정방법
+				//compareTo() 라는 메소드사용
+				return g1.getName().compareTo(g2.getName());	
+			}
+		};
+		Collections.sort(vec,asc);
+		System.out.println(vec.toString());		
 	}
 
 }
